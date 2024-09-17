@@ -1,22 +1,17 @@
 import binascii
 import requests
 from bs4 import BeautifulSoup
-from urllib.parse import unquote_to_bytes
+from urllib.parse import unquote_to_bytes, urlparse, parse_qs
 
-url = """"""
+url = """tracker.opentrackr.org:1337/announce?info_hash=%04mr%e5%7f%0c%e1%88%06%e0jr>%a1%b9'%ff%af%9d&&peer_id=-BT7b0W-%15%b8ol;%c7%15%bf%c2*%af%1f&port=60354&uploaded=0&downloaded=0&left=0&corrupt=0&key=D1D543AE&numwant=200&compact=1&no_peer_id=1"""
 btdigg = "https://btdig.com/"
 
-def retrieve_info_hash(url):
-    # Extract the info_hash from the URL
-    info_hash = url.split('info_hash=')[-1]
-    return info_hash
-
-def url_decode_to_bytes(encoded_str):
-    decoded_bytes = []
-    return unquote_to_bytes(encoded_str)
-
 def get_info_hash(url):
-    return (binascii.hexlify(url_decode_to_bytes(retrieve_info_hash(url)))).decode('utf-8')
+    parsed_url = urlparse(url)
+    query_list = parse_qs(parsed_url.query, encoding='raw_unicode_escape', errors='backslashreplace')
+    info_hash = query_list['info_hash'][0]
+    print(binascii.hexlify(unquote_to_bytes("%04mr%e5%7f%0c%e1%88%06%e0jr>%a1%b9'%ff%af%9d&")).decode('utf-8'))
+    return binascii.hexlify(info_hash.encode('raw_unicode_escape')).decode('utf-8')
 
 def get_torrent_info(info_hash):
     print("Searching torrent for info hash: ", info_hash)
@@ -33,4 +28,5 @@ def get_torrent_info(info_hash):
     
     return dict_info
 
-print(get_torrent_info(get_info_hash(url)))
+# print(get_torrent_info(get_info_hash(url)))
+print(get_torrent_info('046d72e57f0ce18806e06a723ea1b927ffaf9d26'))
